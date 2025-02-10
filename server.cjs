@@ -4,22 +4,11 @@ dotenv.config({ path: "./config.env" });
 
 const app = require("./app.cjs");
 
-const DB = process.env.DATABASE.replace(
-  "<password>",
-  process.env.DATABASE_PASSWORD
-);
-
+const DB = process.env.DATABASE;
 mongoose
-  .connect(DB, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true,
-  })
-  .then((con) => {
-    console.log(con.connections);
-    console.log("DB connection successful!");
-  });
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB connected successfully!"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
