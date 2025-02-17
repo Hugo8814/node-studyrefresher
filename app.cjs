@@ -20,7 +20,7 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
-///// 2) ROUTES
+///// 2)
 const getAllTours = (req, res) => {
   console.log(req.requestTime);
   res.status(200).json({
@@ -128,22 +128,18 @@ const createUser = (req, res) => {
 };
 
 /// 3) ROUTES
-app.use("",toursRouter);
+
 const toursRouter = express.Router();
-toursRouter.route('/api/v1/tours').get(getAllTours).post(createTour);
-toursRouter
-  .route('/api/v1/tours/:id')
-  .get(getTour)
-  .patch(updateTour)
-  .delete(deleteTour);
+const userRouter = express.Router();
 
-app.route('/api/v1/users').get(getAllUsers).post(createUser);
+app.use('/api/v1/tours', toursRouter);
+app.use('/api/v1/users', userRouter);
 
-app
-  .route('/api/v1/users/:id')
-  .get(getUser)
-  .patch(updateUser)
-  .delete(deleteUser);
+toursRouter.route('/').get(getAllTours).post(createTour);
+toursRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
+
+userRouter.route('/').get(getAllUsers).post(createUser);
+userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
 
 // 4) START SERVER
 const port = 3000;
