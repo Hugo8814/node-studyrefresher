@@ -1,8 +1,9 @@
 const express = require('express');
-const fs = require('fs');
+
 const morgan = require('morgan');
 const app = express();
-
+const tourRouter = require('./routes/tourRoutes.cjs');
+const userRouter = require('./routes/userRoutes.cjs');
 /// 1) MIDDLEWARES
 app.use(morgan('dev'));
 app.use(express.json());
@@ -15,22 +16,17 @@ app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
 });
+/////
 
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
-);
 
-///// 2)
-
-/// 3) ROUTES
+/// 2) ROUTES
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
 
 
 
-
-
-// 4) START SERVER
+// 3) START SERVER
 const port = 3000;
-
 app.listen(port, () => {
   console.log(`Server running on port ${port}...`);
 });
