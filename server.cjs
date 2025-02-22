@@ -10,7 +10,7 @@ mongoose
   .then(() => console.log("MongoDB connected successfully!"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-const tourSchema = new mongoose.Scheme({
+const tourSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "A tour must have a name"],
@@ -26,14 +26,18 @@ const tourSchema = new mongoose.Scheme({
   },
 });
 
-const Tour = mongoose.model("Tour", tourSchema);
+const Tour = mongoose.model("tour", tourSchema);
 
 const testTour = new Tour({
-  name: "The Park Camper",
+  name: "hugo3rwe",
+  rating: 4.7,
   price: 997,
 });
 
-
+testTour
+  .save()
+  .then((doc) => console.log(doc))
+  .catch((err) => console.error(err));
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}...`);
