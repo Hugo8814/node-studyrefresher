@@ -1,6 +1,14 @@
 const fs = require("fs");
 const Tour = require("../models/tourModel.cjs");
 
+exports.alisasTopTours = (req, res, next) => {
+  req.query.limit = "5";
+  req.query.sort = "-ratingsAverage,price";
+  req.query.fields = "name,price,ratingsAverage,summary,difficulty";
+  next();
+};
+
+
 exports.getAllTours = async (req, res) => {
   try {
     console.log(req.query);
@@ -23,18 +31,29 @@ exports.getAllTours = async (req, res) => {
     if (req.query.sort) {
       const sortBy = req.query.sort.split(",").join(" ");
       query = query.sort(sortBy);
-    }else {
-      query = query.sort('-createdAt')
+    } else {
+      query = query.sort("-createdAt");
     }
 
     //4) field limiting
     if (req.query.fields) {
       const fields = req.query.fields.split(",").join(" ");
       query = query.select(fields);
-    }else{
-      query = query.select('-__v')
+    } else {
+      query = query.select("-__v");
     }
 
+    //5) pagination
+
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 100;
+    const skip = (page - 1) * limit;
+    query = query.skip(skip).limit(limit);
+
+    if (req.query.page) {
+      const numOfTours = await Tour.countDocuments();
+      if (skip >= numOfTours) throw new Error("This page does not exist");
+    }
     // execute query
     const tours = await query;
 
